@@ -1,0 +1,45 @@
+<div id="${id}" class="bottom-panel vert-resizable top-resizer no-focus">
+    <div class="toolbar simple-toolbar-layout mainToolbar">
+        <span>POSTMAN - REST Client</span>
+        <select id="auth__select" data-bind="value: authMode">
+            <option selected="selected" value="normal">Normal</option>
+            <option disabled="disabled" value="basic">Basic Auth</option>
+            <option disabled="disabled" value="digest">Digest Auth</option>
+            <option disabled="disabled" value="oauth">OAuth 1.0</option>
+        </select>
+        <button id="toolbar-close" data-bind="click: close">×</button>
+    </div>
+    <div class="postman-view resizable-content">
+        <div class="postman-row">
+            <div id="url__input-container">
+                <input id="url__input" placeholder="Enter URL here" type="url" />
+            </div>
+            <div id="btns-container" class="btn-group">
+                <select id="method__select">
+                    <option value="GET" selected="selected">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="PATCH">PATCH</option>
+                    <option value="DELETE">DELETE</option>
+                    <option value="COPY">COPY</option>
+                    <option value="HEAD">HEAD</option>
+                    <option value="OPTIONS">OPTIONS</option>
+                    <option value="LINK">LINK</option>
+                    <option value="UNLINK">UNLINK</option>
+                    <option value="PURGE">PURGE</option>
+                </select>
+                <button id="headers__btn" class="btn small">Headers</button>
+            </div>
+        </div>
+        <div class="postman-row">
+            <div class="btn-group">
+                <button class="btn small primary">Send</button>
+                <button class="btn small">Preview</button>
+                <button class="btn small">Add to collection</button>
+            </div>
+            <div id="btns__container-right">
+                <button id="reset__btn" class="btn small">Reset</button>
+            </div>
+        </div>
+    </div>
+</div>

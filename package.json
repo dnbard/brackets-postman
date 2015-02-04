@@ -1,0 +1,13 @@
+{
+    "name": "dnbard.postman",
+    "title": "Postman",
+    "description": "REST Client that simplifies creation and sending of any HTTP request.",
+    "homepage": "",
+    "version": "0.1.0",
+    "author": "Alex Bardanov",
+    "license": "MIT",
+    "engines": {
+        "brackets": ">=0.44.0"
+    },
+    "keywords": ["postman", "http", "rest", "request", "response"]
+}
