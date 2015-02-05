@@ -11,35 +11,40 @@
     </div>
     <div class="postman-view resizable-content">
         <div class="postman-row">
-            <div id="url__input-container">
-                <input id="url__input" placeholder="Enter URL here" type="url" />
-            </div>
+            <form id="url__input-container">
+                <input id="url__input" placeholder="Enter URL here" type="url" data-bind="textInput: url, enterKey: onSendClick" />
+            </form>
             <div id="btns-container" class="btn-group">
-                <select id="method__select">
-                    <option value="GET" selected="selected">GET</option>
-                    <option value="POST">POST</option>
-                    <option value="PUT">PUT</option>
-                    <option value="PATCH">PATCH</option>
-                    <option value="DELETE">DELETE</option>
-                    <option value="COPY">COPY</option>
-                    <option value="HEAD">HEAD</option>
-                    <option value="OPTIONS">OPTIONS</option>
-                    <option value="LINK">LINK</option>
-                    <option value="UNLINK">UNLINK</option>
-                    <option value="PURGE">PURGE</option>
+                <select id="method__select" data-bind="foreach: getMethods(), value: method">
+                    <option data-bind="text: name, attr:{value: id}"></option>
                 </select>
-                <button id="headers__btn" class="btn small">Headers</button>
+                <button disabled="disabled" id="headers__btn" class="btn small">Headers</button>
             </div>
         </div>
         <div class="postman-row">
             <div class="btn-group">
-                <button class="btn small primary">Send</button>
-                <button class="btn small">Preview</button>
-                <button class="btn small">Add to collection</button>
+                <button class="btn small primary" data-bind="click: onSendClick">Send</button>
+                <button disabled="disabled" class="btn small">Preview</button>
+                <button disabled="disabled" class="btn small">Add to collection</button>
             </div>
             <div id="btns__container-right">
-                <button id="reset__btn" class="btn small">Reset</button>
+                <button disabled="disabled" id="reset__btn" class="btn small">Reset</button>
             </div>
+        </div>
+        <div class="postman-row postman-result">
+
+        </div>
+        <div class="postnam-row postman-result__error" data-bind="if: isShowErrorResult">
+            <!-- ko with: lastHistoryItem -->
+            <h3>Could not get any response</h3>
+            <div>
+                <span>This seems to be like an error</span>
+                <span data-bind="if: url">connecting to <a data-bind="text: url, attr:{href: url}"></a></span>
+                <span>. </span>
+                <span data-bind="if: statusCode">The response status was <span data-bind="text: statusCode"></span>.</span>
+            </div>
+            <div>Check out the <a href="http://www.w3.org/TR/XMLHttpRequest/#the-status-attribute">W3C XMLHttpRequest Level 2 spec</a> for more details about when this happens.</div>
+            <!-- /ko -->
         </div>
     </div>
 </div>
