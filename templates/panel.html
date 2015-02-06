@@ -31,17 +31,19 @@
                 <button disabled="disabled" id="reset__btn" class="btn small">Reset</button>
             </div>
         </div>
-        <div class="postman-row postman-result">
-
+        <div class="postman-row" data-bind="if: isResponse">
+            <!-- ko with: lastHistoryItem -->
+            <textarea class="postman-body" data-bind="value: data"></textarea>
+            <!-- /ko -->
         </div>
-        <div class="postnam-row postman-result__error" data-bind="if: isShowErrorResult">
+        <div class="postnam-row postman-result__error" data-bind="if: isErrorResponse">
             <!-- ko with: lastHistoryItem -->
             <h3>Could not get any response</h3>
             <div>
                 <span>This seems to be like an error</span>
                 <span data-bind="if: url">connecting to <a data-bind="text: url, attr:{href: url}"></a></span>
                 <span>. </span>
-                <span data-bind="if: statusCode">The response status was <span data-bind="text: statusCode"></span>.</span>
+                <span data-bind="if: errorThrown">The response status was <span class="errorThrown" data-bind="text: errorThrown"></span>.</span>
             </div>
             <div>Check out the <a href="http://www.w3.org/TR/XMLHttpRequest/#the-status-attribute">W3C XMLHttpRequest Level 2 spec</a> for more details about when this happens.</div>
             <!-- /ko -->

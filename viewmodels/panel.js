@@ -2,7 +2,8 @@ define(function(require, exports, module){
     var ko = require('../vendor/knockout'),
         _ = require('../vendor/lodash'),
         Methods = require('../enums/methods'),
-        HistoryItem = require('../models/historyItem');
+        HistoryItem = require('../models/historyItem'),
+        beautify = require('../services/beautify');
 
     require('../bindings/enterKey');
 
@@ -22,9 +23,14 @@ define(function(require, exports, module){
             return this.history()[0];
         }, this);
 
-        this.isShowErrorResult = ko.computed(function(){
+        this.isErrorResponse = ko.computed(function(){
             var lastHistoryItem =  this.lastHistoryItem();
             return lastHistoryItem && lastHistoryItem.isError;
+        }, this);
+
+        this.isResponse = ko.computed(function(){
+            var lastHistoryItem =  this.lastHistoryItem();
+            return lastHistoryItem && !lastHistoryItem.isError;
         }, this);
     }
 
@@ -38,7 +44,7 @@ define(function(require, exports, module){
             self = this;
 
         if (!url){
-            this.history.unshift(new HistoryItem({
+            this.history.unshift(HistoryItem.create({
                 url: url,
                 isError: true
             }));
@@ -53,16 +59,23 @@ define(function(require, exports, module){
             url: url,
             method: this.method()
         }).success(function(data, textStatus, jqXHR){
-            self.history.unshift(new HistoryItem({
+            self.history.unshift(HistoryItem.create({
                 url: url,
                 isError: false,
-                statusCode: textStatus
+                statusCode: null,
+                data: beautify.html(data),
+                textStatus: textStatus,
+                jqXHR: jqXHR
             }));
         }).error(function(jqXHR, textStatus, errorThrown){
-            self.history.unshift(new HistoryItem({
+            self.history.unshift(HistoryItem.create({
                 url: url,
                 isError: true,
-                statusCode: textStatus
+                statusCode: null,
+                errorThrown: errorThrown,
+                textStatus: textStatus,
+                data: null,
+                jqXHR: jqXHR
             }));
         });
 
