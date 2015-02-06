@@ -1,16 +1,28 @@
+.dark #postman-toolbar-icon{
+    color: white;
+    border: 1px dashed white;
+
+    &.selected{
+        border: none;
+        background: lightgray;
+        color: black;
+    }
+}
+
 #postman-toolbar-icon{
     background: transparent;
     display: inline-block;
     width: 24px;
     height: 24px;
-    color: white;
+    color: darkgray;
     font-size: 15pt;
     vertical-align: top;
     line-height: 13pt;
     text-decoration: none;
     border-radius: 3px;
-    border: 1px dashed white;
+    border: 1px dashed darkgray;
     box-sizing: border-box;
+    transition: 0.25s background, 0.25s color;
 
     &:before{
         content: "P";
@@ -18,8 +30,8 @@
 
     &.selected{
         border: none;
-        background: lightgray;
-        color: black;
+        background: darkgray;
+        color: white;
     }
 }
 
@@ -66,9 +78,9 @@
 
     #url__input-container{
         width: 100%;
-        padding-right: 160px;
+        padding-right: 150px;
         box-sizing: border-box;
-        margin-bottom: 0;
+        margin-bottom: 4px;
 
         #url__input{
             width: 100%;
