@@ -31,9 +31,9 @@
                 <button disabled="disabled" id="reset__btn" class="btn small">Reset</button>
             </div>
         </div>
-        <div class="postman-row" data-bind="if: isResponse">
+        <div class="postman-result" data-bind="if: isResponse">
             <!-- ko with: lastHistoryItem -->
-            <textarea class="postman-body" data-bind="value: data"></textarea>
+            <textarea class="postman-result__body" data-bind="value: data" disabled="disabled" ></textarea>
             <!-- /ko -->
         </div>
         <div class="postnam-row postman-result__error" data-bind="if: isErrorResponse">
