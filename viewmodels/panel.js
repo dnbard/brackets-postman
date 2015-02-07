@@ -63,7 +63,7 @@ define(function(require, exports, module){
                 url: url,
                 isError: false,
                 statusCode: null,
-                data: beautify.html(data),
+                data: beautify.do(data),
                 textStatus: textStatus,
                 jqXHR: jqXHR
             }));
