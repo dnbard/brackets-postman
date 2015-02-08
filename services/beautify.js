@@ -5,7 +5,7 @@ define(function(require, exports, module){
         html : require('../vendor/beautify/lib/beautify-html').html_beautify
     }
 
-    Beautifier.do = function(data){
+    Beautifier.do = function(data, options){
         var result = null;
 
         if (typeof data !== "string"){
@@ -13,17 +13,17 @@ define(function(require, exports, module){
         }
 
         try{
-            result = Beautifier.js(data);
+            result = Beautifier.js(data, options);
             return result;
         } catch(e){ }
 
         try{
-            result = Beautifier.css(data);
+            result = Beautifier.css(data, options);
             return result;
         } catch(e){ }
 
         try{
-            result = Beautifier.html(data);
+            result = Beautifier.html(data, options);
             return result;
         } catch(e){ }
 

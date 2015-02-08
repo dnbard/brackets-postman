@@ -1,14 +1,3 @@
-.dark #postman-toolbar-icon{
-    color: white;
-    border: 1px dashed white;
-
-    &.selected{
-        border: none;
-        background: lightgray;
-        color: black;
-    }
-}
-
 #postman-toolbar-icon{
     background: transparent;
     display: inline-block;
@@ -93,7 +82,7 @@
             width: 100%;
             height: 100%;
             box-sizing: border-box;
-            color: white;
+            color: black;
             opacity: 1;
             font-size: medium;
             font-family: monospace;
@@ -103,7 +92,7 @@
 
     #url__input-container{
         width: 100%;
-        padding-right: 150px;
+        padding-right: 215px;
         box-sizing: border-box;
         margin-bottom: 4px;
 
@@ -154,5 +143,22 @@
 
     .errorThrown{
         font-weight: bold;
+    }
+}
+
+.dark{
+    #postman-toolbar-icon{
+        color: white;
+        border: 1px dashed white;
+
+        &.selected{
+            border: none;
+            background: lightgray;
+            color: black;
+        }
+    }
+
+    .postman-result__body{
+        color: white !important;
     }
 }

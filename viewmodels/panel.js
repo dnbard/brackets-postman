@@ -2,6 +2,7 @@ define(function(require, exports, module){
     var ko = require('../vendor/knockout'),
         _ = require('../vendor/lodash'),
         Methods = require('../enums/methods'),
+        ResponseTabs = require('../enums/responseTabs'),
         HistoryItem = require('../models/historyItem'),
         beautify = require('../services/beautify');
 
@@ -38,11 +39,45 @@ define(function(require, exports, module){
         this.isMakingTheRequest = ko.observable(false);
 
         this.urlFocused = ko.observable(true);
+
+        this.responseTab = ko.observable(ResponseTabs.BODY);
     }
 
     PanelViewModel.prototype.close = function(){
         this.element.hide();
         this.$icon.removeClass('selected');
+    }
+
+    PanelViewModel.prototype.isActiveResponseTab = function(element){
+        var tab = $(element).attr("data-tab");
+
+        return ResponseTabs[tab] === this.responseTab();
+    }
+
+    PanelViewModel.prototype.setActiveTab = function(viewmodel, event){
+        var tab = $(event.target).attr('data-tab');
+
+        if (!ResponseTabs[tab]){
+            throw new Error('Cannot set active tab for this element');
+        }
+
+        viewmodel.responseTab(ResponseTabs[tab]);
+    }
+
+    PanelViewModel.prototype.getHeadersText = function(viewmodel){
+        var lastHistoryItem = viewmodel.lastHistoryItem();
+
+        if (lastHistoryItem){
+            return 'Response Headers (' + _.size(lastHistoryItem.headers) + ')';
+        } else {
+            return 'Response Headers';
+        }
+    }
+
+    PanelViewModel.prototype.formatHeaders = function(headers){
+        return beautify.do(headers, {
+            "keep_array_indentation": true
+        });
     }
 
     PanelViewModel.prototype.onSendClick = function(){
@@ -76,7 +111,7 @@ define(function(require, exports, module){
                 data: beautify.do(data),
                 textStatus: textStatus,
                 jqXHR: jqXHR,
-                headers: jqXHR.getAllResponseHeaders().split('\n')
+                headers: self.formatHeaders(jqXHR.getAllResponseHeaders())
             }));
         }).error(function(jqXHR, textStatus, errorThrown){
             self.isMakingTheRequest(false);
@@ -89,7 +124,7 @@ define(function(require, exports, module){
                 textStatus: textStatus,
                 data: null,
                 jqXHR: jqXHR,
-                headers: jqXHR.getAllResponseHeaders().split('\n')
+                headers: self.formatHeaders(jqXHR.getAllResponseHeaders())
             }));
         });
 
@@ -100,6 +135,22 @@ define(function(require, exports, module){
         return _.map(Methods, function(m){
             return { name: m, id: m };
         });
+    }
+
+    PanelViewModel.prototype.formatHeaders = function(headersData){
+        var tempData = (headersData || '').split('\n'),
+            headers = _.chain(tempData).compact().map(function(header){
+                var temp = header.split(':'),
+                    name = temp[0],
+                    value = temp[1];
+
+                return {
+                    name: name.trim(),
+                    value: value.trim()
+                }
+            }).sortBy('name').value();
+
+        return headers;
     }
 
     PanelViewModel.prototype.checkThemeColor = function(color){

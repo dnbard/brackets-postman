@@ -18,14 +18,14 @@
                 <select id="method__select" data-bind="foreach: getMethods(), value: method">
                     <option data-bind="text: name, attr:{value: id}"></option>
                 </select>
-                <button disabled="disabled" id="headers__btn" class="btn small">Headers</button>
+                <button disabled="disabled" id="headers__btn" class="btn small">Set Request Headers</button>
             </div>
         </div>
         <div class="postman-row">
             <div class="btn-group">
                 <button class="btn small primary" data-bind="click: onSendClick">Send</button>
-                <button disabled="disabled" class="btn small">Preview</button>
-                <button disabled="disabled" class="btn small">Add to collection</button>
+                <button class="btn small" data-tab="BODY" data-bind="visible: isResponse, css:{active: isActiveResponseTab($element)}, click: setActiveTab">Body</button>
+                <button class="btn small" data-tab="HEADERS" data-bind="visible: isResponse, css:{active: isActiveResponseTab($element)}, click: setActiveTab, text: getHeadersText($data)"></button>
             </div>
             <!-- ko if: isMakingTheRequest -->
             <img width="16" height="16" title="" alt="" data-bind="attr:{src: getSpinnerData()}" />
@@ -37,7 +37,15 @@
         </div>
         <div class="postman-result" data-bind="if: isResponse">
             <!-- ko with: lastHistoryItem -->
-            <textarea class="postman-result__body" data-bind="value: data" disabled="disabled" ></textarea>
+            <textarea class="postman-result__body" data-tab="BODY" data-bind="value: data, visible: $parent.isActiveResponseTab($element)" disabled="disabled" ></textarea>
+            <!--<textarea class="postman-result__body" data-tab="HEADERS" data-bind="value: $parent.formatHeaders(headers), visible: $parent.isActiveResponseTab($element)"></textarea>-->
+            <div class="postman-result__body postman-headers" data-tab="HEADERS" data-bind="foreach: headers, visible: $parent.isActiveResponseTab($element)">
+                <div class="postman-header">
+                    <span data-bind="text: name"></span>
+                    <span> → </span>
+                    <span data-bind="text: value"></span>
+                </div>
+            </div>
             <!-- /ko -->
         </div>
         <div class="postnam-row postman-result__error" data-bind="if: isErrorResponse">
