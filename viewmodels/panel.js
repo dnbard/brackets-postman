@@ -76,7 +76,8 @@ define(function(require, exports, module){
 
     PanelViewModel.prototype.onSendClick = function(){
         var url = this.url() || '',
-            self = this;
+            self = this,
+            responseTimestamp;
 
         if (!url){
             this.history.unshift(HistoryItem.create({
@@ -92,6 +93,8 @@ define(function(require, exports, module){
 
         this.isMakingTheRequest(true);
 
+        responseTimestamp = new Date();
+
         $.ajax({
             url: url,
             method: this.method()
@@ -101,11 +104,12 @@ define(function(require, exports, module){
             self.history.unshift(HistoryItem.create({
                 url: url,
                 isError: false,
-                statusCode: null,
+                statusCode: jqXHR.status,
                 data: beautify.do(data),
-                textStatus: textStatus,
+                textStatus: jqXHR.statusText,
                 jqXHR: jqXHR,
-                headers: self.formatHeaders(jqXHR.getAllResponseHeaders())
+                headers: self.formatHeaders(jqXHR.getAllResponseHeaders()),
+                time: new Date() - responseTimestamp
             }));
         }).error(function(jqXHR, textStatus, errorThrown){
             self.isMakingTheRequest(false);
@@ -113,12 +117,13 @@ define(function(require, exports, module){
             self.history.unshift(HistoryItem.create({
                 url: url,
                 isError: true,
-                statusCode: null,
+                statusCode: jqXHR.status,
                 errorThrown: errorThrown,
-                textStatus: textStatus,
+                textStatus: jqXHR.statusText,
                 data: null,
                 jqXHR: jqXHR,
-                headers: self.formatHeaders(jqXHR.getAllResponseHeaders())
+                headers: self.formatHeaders(jqXHR.getAllResponseHeaders()),
+                time: new Date() - responseTimestamp
             }));
         });
 

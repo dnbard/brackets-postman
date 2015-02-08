@@ -24,8 +24,19 @@
         <div class="postman-row">
             <div class="btn-group">
                 <button class="btn small primary" data-bind="click: onSendClick">Send</button>
-                <button class="btn small" data-tab="BODY" data-bind="visible: isResponse, css:{active: isActiveResponseTab($element)}, click: setActiveTab">Body</button>
-                <button class="btn small" data-tab="HEADERS" data-bind="visible: isResponse, css:{active: isActiveResponseTab($element)}, click: setActiveTab, text: getHeadersText($data)"></button>
+                <!-- ko if: isResponse -->
+                <button class="btn small" data-tab="BODY" data-bind="css:{active: isActiveResponseTab($element)}, click: setActiveTab">Body</button>
+                <button class="btn small" data-tab="HEADERS" data-bind="css:{active: isActiveResponseTab($element)}, click: setActiveTab, text: getHeadersText($data)"></button>
+                <!-- ko with: lastHistoryItem -->
+                <span class="postman-statusFirst" data-bind="text: statusCode"></span>
+                <span class="postman-statusSecond" data-bind="text: textStatus"></span>
+                <span class="postman-statusFirst">Time</span>
+                <span class="postman-statusSecond">
+                    <span data-bind="text: time"></span>
+                    <span>ms</span>
+                </span>
+                <!-- /ko -->
+                <!-- /ko -->
             </div>
             <!-- ko if: isMakingTheRequest -->
             <img width="16" height="16" title="" alt="" data-bind="attr:{src: getSpinnerData()}" />
