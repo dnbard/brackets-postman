@@ -74,12 +74,6 @@ define(function(require, exports, module){
         }
     }
 
-    PanelViewModel.prototype.formatHeaders = function(headers){
-        return beautify.do(headers, {
-            "keep_array_indentation": true
-        });
-    }
-
     PanelViewModel.prototype.onSendClick = function(){
         var url = this.url() || '',
             self = this;
