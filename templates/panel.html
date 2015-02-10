@@ -18,15 +18,17 @@
                 <select id="method__select" data-bind="foreach: getMethods(), value: method">
                     <option data-bind="text: name, attr:{value: id, disabled: !available}"></option>
                 </select>
-                <button disabled="disabled" id="headers__btn" class="btn small">Set Request Headers</button>
             </div>
         </div>
         <div class="postman-row">
             <div class="btn-group">
                 <button class="btn small primary" data-bind="click: onSendClick">Send</button>
+                <button class="btn small" disabled="disabled">URL params</button>
+                <button disabled="disabled" class="btn small">Request headers</button>
+                <button class="btn small" disabled="disabled">Request body</button>
                 <!-- ko if: isResponse -->
-                <button class="btn small" data-tab="BODY" data-bind="css:{active: isActiveResponseTab($element)}, click: setActiveTab">Body</button>
                 <button class="btn small" data-tab="HEADERS" data-bind="css:{active: isActiveResponseTab($element)}, click: setActiveTab, text: getHeadersText($data)"></button>
+                <button class="btn small" data-tab="BODY" data-bind="css:{active: isActiveResponseTab($element)}, click: setActiveTab">Response body</button>
                 <!-- ko with: lastHistoryItem -->
                 <span class="postman-statusFirst" data-bind="text: statusCode"></span>
                 <span class="postman-statusSecond" data-bind="text: textStatus"></span>
