@@ -16,7 +16,7 @@
             </form>
             <div id="btns-container" class="btn-group">
                 <select id="method__select" data-bind="foreach: getMethods(), value: method">
-                    <option data-bind="text: name, attr:{value: id, disabled: !available}"></option>
+                    <option data-bind="text: name, disable: !available ,attr:{value: id}"></option>
                 </select>
             </div>
         </div>
@@ -25,7 +25,7 @@
                 <button class="btn small primary" data-bind="click: onSendClick">Send</button>
                 <button class="btn small" disabled="disabled">URL params</button>
                 <button disabled="disabled" class="btn small">Request headers</button>
-                <button class="btn small" disabled="disabled">Request body</button>
+                <button class="btn small" data-bind="disable: isBodylessMethod">Request body</button>
                 <!-- ko if: isResponse -->
                 <button class="btn small" data-tab="HEADERS" data-bind="css:{active: isActiveResponseTab($element)}, click: setActiveTab, text: getHeadersText($data)"></button>
                 <button class="btn small" data-tab="BODY" data-bind="css:{active: isActiveResponseTab($element)}, click: setActiveTab">Response body</button>

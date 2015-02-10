@@ -20,6 +20,11 @@ define(function(require, exports, module){
 
         this.url = ko.observable(null);
         this.method = ko.observable(_.first(Methods));
+        this.isBodylessMethod = ko.computed(function(){
+            var method = this.method();
+
+            return method !== 'POST' && method !== 'PUT' && method !== 'PATCH' && method !== 'DELETE';
+        }, this);
 
         this.history = ko.observableArray([]);
         this.history.subscribe(function(newHistoryItem){
@@ -132,16 +137,12 @@ define(function(require, exports, module){
         return false;
     }
 
-    PanelViewModel.prototype.isMethodAvailable = function(method){
-        return method !== 'POST' && method !== 'PUT' && method !== 'PATCH' && method !== 'DELETE';
-    }
-
     PanelViewModel.prototype.getMethods = function(){
         return _.map(Methods, function(m){
             return {
                 name: m,
                 id: m,
-                available: this.isMethodAvailable(m)
+                available: true
             };
         }, this);
     }
