@@ -9,6 +9,8 @@ define(function(require, exports, module){
     require('../bindings/enterKey');
 
     function PanelViewModel(options){
+        var self = this;
+
         this.overrideShowMethod(options.panel);
 
         this.element = options.panel;
@@ -19,12 +21,12 @@ define(function(require, exports, module){
         this.url = ko.observable(null);
         this.method = ko.observable(_.first(Methods));
 
-        this.isError = ko.observable(false);
-
         this.history = ko.observableArray([]);
-        this.lastHistoryItem = ko.computed(function(){
-            return this.history()[0];
-        }, this);
+        this.history.subscribe(function(newHistoryItem){
+            self.lastHistoryItem(_.first(newHistoryItem));
+        });
+
+        this.lastHistoryItem = ko.observable(null);
 
         this.isErrorResponse = ko.computed(function(){
             var lastHistoryItem =  this.lastHistoryItem();
@@ -173,6 +175,13 @@ define(function(require, exports, module){
         setTimeout(function(){
             self.urlFocused(true);
         }, 10);
+    }
+
+    PanelViewModel.prototype.reset = function(){
+        this.authMode('normal');
+        this.url(null);
+        this.method(_.first(Methods));
+        this.lastHistoryItem(null);
     }
 
     PanelViewModel.prototype.getSpinnerData = function(){
