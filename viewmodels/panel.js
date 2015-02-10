@@ -132,10 +132,24 @@ define(function(require, exports, module){
         return false;
     }
 
+    PanelViewModel.prototype.isMethodAvailable = function(method){
+        return method !== 'POST' && method !== 'PUT' && method !== 'PATCH' && method !== 'DELETE';
+    }
+
     PanelViewModel.prototype.getMethods = function(){
         return _.map(Methods, function(m){
-            return { name: m, id: m };
-        });
+            return {
+                name: m,
+                id: m,
+                available: this.isMethodAvailable(m)
+            };
+        }, this);
+    }
+
+    PanelViewModel.prototype.formatHeadersOutput = function(headersData){
+        return _.map(headersData, function(header){
+            return header.name + ' → ' + header.value;
+        }).join('\n');
     }
 
     PanelViewModel.prototype.formatHeaders = function(headersData){
