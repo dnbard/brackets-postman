@@ -1,13 +1,13 @@
 {
     "name": "dnbard.postman",
     "title": "Postman",
-    "description": "REST Client that simplifies creation and sending of any HTTP request.",
-    "homepage": "",
+    "description": "REST Client that simplifies creation and sending of any HTTP request. This is an ALPHA release. Please report your ideas and bugs!",
+    "homepage": "https://github.com/dnbard/brackets-postman",
     "version": "0.1.0",
     "author": "Alex Bardanov",
     "license": "MIT",
     "engines": {
-        "brackets": ">=0.44.0"
+        "brackets": ">=1.1.0"
     },
     "keywords": ["postman", "http", "rest", "request", "response"]
 }
