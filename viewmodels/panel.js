@@ -4,7 +4,8 @@ define(function(require, exports, module){
         Methods = require('../enums/methods'),
         ResponseTabs = require('../enums/responseTabs'),
         HistoryItem = require('../models/historyItem'),
-        beautify = require('../services/beautify');
+        beautify = require('../services/beautify'),
+        request = require('../services/request');
 
     require('../bindings/enterKey');
 
@@ -102,10 +103,14 @@ define(function(require, exports, module){
 
         responseTimestamp = new Date();
 
-        $.ajax({
+        request.ajax({
             url: url,
             method: this.method()
-        }).success(function(data, textStatus, jqXHR){
+        }).then(function(payload){
+            var data = payload.data,
+                textStatus = payload.textStatus,
+                jqXHR = payload.jqXHR;
+
             self.isMakingTheRequest(false);
 
             self.history.unshift(HistoryItem.create({
@@ -118,7 +123,11 @@ define(function(require, exports, module){
                 headers: self.formatHeaders(jqXHR.getAllResponseHeaders()),
                 time: new Date() - responseTimestamp
             }));
-        }).error(function(jqXHR, textStatus, errorThrown){
+        }, function(payload){
+            var jqXHR = payload.jqXHR,
+                textStatus = payload.textStatus,
+                errorThrown = payload.errorThrown;
+
             self.isMakingTheRequest(false);
 
             self.history.unshift(HistoryItem.create({
