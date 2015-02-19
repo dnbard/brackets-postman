@@ -4,7 +4,6 @@ define(function(require, exports, module){
         Methods = require('../enums/methods'),
         ResponseTabs = require('../enums/responseTabs'),
         HistoryItem = require('../models/historyItem'),
-        beautify = require('../services/beautify'),
         request = require('../services/request');
 
     require('../bindings/enterKey');
@@ -107,41 +106,20 @@ define(function(require, exports, module){
             url: url,
             method: this.method()
         }).then(function(payload){
-            var data = payload.data,
-                textStatus = payload.textStatus,
-                jqXHR = payload.jqXHR;
-
-            self.isMakingTheRequest(false);
-
-            self.history.unshift(HistoryItem.create({
+            self.history.unshift(HistoryItem.create(_.extend({
                 url: url,
                 isError: false,
-                statusCode: jqXHR.status,
-                data: beautify.do(data),
-                textStatus: jqXHR.statusText,
-                jqXHR: jqXHR,
-                headers: self.formatHeaders(jqXHR.getAllResponseHeaders()),
                 time: new Date() - responseTimestamp
-            }));
+            }, payload.response)));
         }, function(payload){
-            var jqXHR = payload.jqXHR,
-                textStatus = payload.textStatus,
-                errorThrown = payload.errorThrown;
-
-            self.isMakingTheRequest(false);
-
-            self.history.unshift(HistoryItem.create({
+            self.history.unshift(HistoryItem.create(_.extend({
                 url: url,
                 isError: true,
-                statusCode: jqXHR.status,
-                errorThrown: errorThrown,
-                textStatus: jqXHR.statusText,
-                data: null,
-                jqXHR: jqXHR,
-                headers: self.formatHeaders(jqXHR.getAllResponseHeaders()),
                 time: new Date() - responseTimestamp
-            }));
-        });
+            }, payload.response)));
+        }).then(function(){
+            self.isMakingTheRequest(false);
+        }).done();
 
         return false;
     }
@@ -160,22 +138,6 @@ define(function(require, exports, module){
         return _.map(headersData, function(header){
             return header.name + ' → ' + header.value;
         }).join('\n');
-    }
-
-    PanelViewModel.prototype.formatHeaders = function(headersData){
-        var tempData = (headersData || '').split('\n'),
-            headers = _.chain(tempData).compact().map(function(header){
-                var temp = header.split(':'),
-                    name = temp[0],
-                    value = temp[1];
-
-                return {
-                    name: name.trim(),
-                    value: value.trim()
-                }
-            }).sortBy('name').value();
-
-        return headers;
     }
 
     PanelViewModel.prototype.checkThemeColor = function(color){
