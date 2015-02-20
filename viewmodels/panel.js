@@ -7,6 +7,7 @@ define(function(require, exports, module){
         request = require('../services/request');
 
     require('../bindings/enterKey');
+    require('../bindings/codemirror');
 
     function PanelViewModel(options){
         var self = this;
@@ -48,6 +49,23 @@ define(function(require, exports, module){
         this.urlFocused = ko.observable(true);
 
         this.responseTab = ko.observable(ResponseTabs.BODY);
+
+        this.responseView = ko.computed(function(){
+            var responseTab = this.responseTab(),
+                lastHistoryItem = this.lastHistoryItem();
+
+            if (!lastHistoryItem){
+                return '';
+            }
+
+            if (responseTab === ResponseTabs.BODY){
+                return lastHistoryItem.data;
+            }
+
+            if (responseTab === ResponseTabs.HEADERS){
+                return lastHistoryItem.headers;
+            }
+        }, this);
     }
 
     PanelViewModel.prototype.close = function(){
@@ -74,8 +92,8 @@ define(function(require, exports, module){
     PanelViewModel.prototype.getHeadersText = function(viewmodel){
         var lastHistoryItem = viewmodel.lastHistoryItem();
 
-        if (lastHistoryItem){
-            return 'Response Headers (' + _.size(lastHistoryItem.headers) + ')';
+        if (lastHistoryItem && lastHistoryItem.headersCount){
+            return 'Response Headers (' + lastHistoryItem.headersCount + ')';
         } else {
             return 'Response Headers';
         }

@@ -49,10 +49,7 @@
             </div>
         </div>
         <div class="postman-result" data-bind="if: isResponse">
-            <!-- ko with: lastHistoryItem -->
-            <textarea class="postman-result__body" data-tab="BODY" data-bind="value: data, visible: $parent.isActiveResponseTab($element)" disabled="disabled" ></textarea>
-            <textarea class="postman-result__body" data-tab="HEADERS" data-bind="value: $parent.formatHeadersOutput(headers), visible: $parent.isActiveResponseTab($element)" disabled="disabled" ></textarea>
-            <!-- /ko -->
+            <textarea class="postman-result__body" data-bind="visible:false, codeMirror: responseView()" disabled="disabled" ></textarea>
         </div>
         <div class="postnam-row postman-result__error" data-bind="if: isErrorResponse">
             <!-- ko with: lastHistoryItem -->

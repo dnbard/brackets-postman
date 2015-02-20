@@ -5,6 +5,7 @@ define(function(require, exports){
 
     function formatHeaders(headersData){
         var tempData = (headersData || '').split('\n'),
+            result = {},
             headers = _.chain(tempData).compact().map(function(header){
                 var temp = header.split(':'),
                     name = temp[0],
@@ -16,7 +17,15 @@ define(function(require, exports){
                 }
             }).sortBy('name').value();
 
-        return headers;
+        _.each(headers, function(header){
+            result[header.name] = header.value;
+        });
+
+        return beautify.do(JSON.stringify(result));
+    }
+
+    function countHeaders(headersData){
+        return (headersData || '').split('\n').length;
     }
 
     exports.ajax = function(options){
@@ -35,6 +44,7 @@ define(function(require, exports){
                     data: beautify.do(data),
                     textStatus: jqXHR.statusText,
                     headers: formatHeaders(jqXHR.getAllResponseHeaders()),
+                    headersCount: countHeaders(jqXHR.getAllResponseHeaders()),
                     jqXHR: jqXHR
                 }
             });
@@ -51,7 +61,8 @@ define(function(require, exports){
                     textStatus: jqXHR.statusText,
                     data: null,
                     jqXHR: jqXHR,
-                    headers: formatHeaders(jqXHR.getAllResponseHeaders())
+                    headers: formatHeaders(jqXHR.getAllResponseHeaders()),
+                    headersCount: countHeaders(jqXHR.getAllResponseHeaders()),
                 }
             });
         });
