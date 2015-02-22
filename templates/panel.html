@@ -26,7 +26,7 @@
                 <button class="btn small" disabled="disabled">URL params</button>
                 <button disabled="disabled" class="btn small">Request headers</button>
                 <button class="btn small" data-bind="disable: isBodylessMethod">Request body</button>
-                <!-- ko if: isResponse -->
+                <!-- ko if: isResponse && lastHistoryItem -->
                 <button class="btn small" data-tab="HEADERS" data-bind="css:{active: isActiveResponseTab($element)}, click: setActiveTab, text: getHeadersText($data)"></button>
                 <button class="btn small" data-tab="BODY" data-bind="css:{active: isActiveResponseTab($element)}, click: setActiveTab">Response body</button>
                 <!-- ko with: lastHistoryItem -->
@@ -48,10 +48,10 @@
                 <button id="reset__btn" class="btn small" data-bind="click: reset">Reset</button>
             </div>
         </div>
-        <div class="postman-result" data-bind="if: isResponse">
+        <div class="postman-result" data-bind="if: isResponse() || responseView()">
             <textarea class="postman-result__body" data-bind="visible:false, codeMirror: responseView()" disabled="disabled" ></textarea>
         </div>
-        <div class="postnam-row postman-result__error" data-bind="if: isErrorResponse">
+        <div class="postnam-row postman-result__error" data-bind="if: isErrorResponse() && !responseView()">
             <!-- ko with: lastHistoryItem -->
             <h3>Could not get any response</h3>
             <div>

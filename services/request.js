@@ -6,16 +6,25 @@ define(function(require, exports){
     function formatHeaders(headersData){
         var tempData = (headersData || '').split('\n'),
             result = {},
-            headers = _.chain(tempData).compact().map(function(header){
-                var temp = header.split(':'),
-                    name = temp[0],
-                    value = temp[1];
+            headers = _.chain(tempData)
+                .compact()
+                .map(function(header){
+                    var temp = (header || ':').split(':'),
+                        name = temp[0],
+                        value = temp[1];
 
-                return {
-                    name: name.trim(),
-                    value: value.trim()
-                }
-            }).sortBy('name').value();
+                    if (!name || !value){
+                        return null;
+                    }
+
+                    return {
+                        name: name.trim(),
+                        value: value.trim()
+                    }
+                })
+                .compact()
+                .sortBy('name')
+                .value();
 
         _.each(headers, function(header){
             result[header.name] = header.value;
@@ -25,7 +34,9 @@ define(function(require, exports){
     }
 
     function countHeaders(headersData){
-        return (headersData || '').split('\n').length;
+        return _.chain((headersData || '').split('\n'))
+            .compact()
+            .size();
     }
 
     exports.ajax = function(options){

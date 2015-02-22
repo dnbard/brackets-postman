@@ -28,8 +28,13 @@ define(function(require, exports, module){
         }, this);
 
         this.history = ko.observableArray([]);
-        this.history.subscribe(function(newHistoryItem){
-            self.lastHistoryItem(_.first(newHistoryItem));
+        this.history.subscribe(function(historyItems){
+            var newHistoryItem;
+
+            if (_.isArray(historyItems)){
+                newHistoryItem = _.first(historyItems);
+                self.lastHistoryItem(newHistoryItem);
+            }
         });
 
         this.lastHistoryItem = ko.observable(null);
@@ -90,7 +95,7 @@ define(function(require, exports, module){
     }
 
     PanelViewModel.prototype.getHeadersText = function(viewmodel){
-        var lastHistoryItem = viewmodel.lastHistoryItem();
+        var lastHistoryItem = this.lastHistoryItem();
 
         if (lastHistoryItem && lastHistoryItem.headersCount){
             return 'Response Headers (' + lastHistoryItem.headersCount + ')';
@@ -137,7 +142,8 @@ define(function(require, exports, module){
             }, payload.response)));
         }).then(function(){
             self.isMakingTheRequest(false);
-        }).done();
+        })
+        .done();
 
         return false;
     }
