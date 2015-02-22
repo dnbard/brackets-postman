@@ -142,6 +142,7 @@ define(function(require, exports, module){
             }, payload.response)));
         }).then(function(){
             self.isMakingTheRequest(false);
+            self.responseTab(ResponseTabs.BODY);
         })
         .done();
 
