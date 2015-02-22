@@ -50,7 +50,7 @@
         </div>
         <div class="postman-result" data-bind="if: isResponse() || responseView()">
             <!-- CodeMirror command instance -->
-            <textarea class="postman-result__body" data-bind="codeMirror: responseView(), cmEditable: false" style="display: none;"></textarea>
+            <textarea class="postman-result__body" data-bind="codemirror: responseView(), cmEditable: false" style="display: none;"></textarea>
         </div>
         <div class="postnam-row postman-result__error" data-bind="if: isErrorResponse() && !responseView()">
             <!-- ko with: lastHistoryItem -->
