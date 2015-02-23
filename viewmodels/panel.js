@@ -22,6 +22,15 @@ define(function(require, exports, module){
 
         this.url = ko.observable(null);
         this.method = ko.observable(_.first(Methods));
+        this.method.subscribe(function(method){
+            var responseTab = self.responseTab();
+
+            if ((method !== 'POST' && method !== 'PUT' && method !== 'PATCH' && method !== 'DELETE') &&
+                (responseTab === ResponseTabs.REQUEST_BODY)){
+                self.responseTab(ResponseTabs.BODY);
+            }
+        });
+
         this.isBodylessMethod = ko.computed(function(){
             var method = this.method();
 
@@ -325,6 +334,7 @@ define(function(require, exports, module){
         this.lastHistoryItem(null);
         this.codemirrorValue('');
         this.requestHeaders({});
+        this.requestBody({});
     }
 
     PanelViewModel.prototype.codemirrorEditableLabel = function(){
