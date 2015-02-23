@@ -58,11 +58,32 @@ define(function(require, exports, module){
 
         this.responseView = ko.computed(function(){
             var responseTab = this.responseTab(),
-                lastHistoryItem = this.lastHistoryItem();
+                lastHistoryItem = this.lastHistoryItem(),
+                headers, body;
 
             if (responseTab === ResponseTabs.REQUEST_HEADERS){
                 try{
-                    return beautify.do(JSON.stringify(this.requestHeaders()));
+                    headers = this.requestHeaders();
+
+                    if (typeof headers !== 'object'){
+                        return '{}';
+                    }
+
+                    return beautify.do(JSON.stringify(headers));
+                } catch(e){
+                    return '{}';
+                }
+            }
+
+            if (responseTab === ResponseTabs.REQUEST_BODY){
+                try{
+                    body = this.requestBody();
+
+                    if (typeof body !== 'object'){
+                        return '{}';
+                    }
+
+                    return beautify.do(JSON.stringify(body));
                 } catch(e){
                     return '{}';
                 }
@@ -120,6 +141,8 @@ define(function(require, exports, module){
         this.requestHeadersCount = ko.computed(function(){
             return _.size(this.requestHeaders());
         }, this);
+
+        this.requestBody = ko.observable({});
     }
 
     PanelViewModel.prototype.close = function(){
@@ -160,6 +183,19 @@ define(function(require, exports, module){
             }
             catch(e){ }
         }
+
+        if (data.currentTab === ResponseTabs.REQUEST_BODY){
+            //if user erased everything
+            if (this.codemirrorValue().length === 0){
+                return this.requestBody('');
+            }
+
+            //saving body if valid JSON object is present
+            try{
+                this.requestBody(JSON.parse(this.codemirrorValue()));
+            }
+            catch(e){ }
+        }
     }
 
     PanelViewModel.prototype.getHeadersText = function(viewmodel){
@@ -179,6 +215,16 @@ define(function(require, exports, module){
             return 'Request Headers (' + headersCount + ')';
         } else {
             return 'Request Headers';
+        }
+    }
+
+    PanelViewModel.prototype.getRequestBodyText = function(viewmodel){
+        var isBodyPresent = !!_.size(viewmodel.requestBody());
+
+        if (isBodyPresent){
+            return 'Request Body (*)';
+        } else {
+            return 'Request Body';
         }
     }
 
@@ -210,7 +256,8 @@ define(function(require, exports, module){
         request.ajax({
             url: url,
             method: this.method(),
-            headers: this.requestHeaders() || {}
+            headers: this.requestHeaders() || {},
+            data: this.isBodylessMethod() ? undefined : this.requestBody()
         }).then(function(payload){
             self.history.unshift(HistoryItem.create(_.extend({
                 url: url,

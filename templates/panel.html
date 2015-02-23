@@ -1,7 +1,7 @@
 <div id="${id}" class="bottom-panel vert-resizable top-resizer no-focus">
     <div class="toolbar simple-toolbar-layout mainToolbar">
         <span>POSTMAN - REST Client</span>
-        <select id="auth__select" data-bind="value: authMode">
+        <select id="auth__select" data-bind="value: authMode" style="display: none;">
             <option selected="selected" value="normal">Normal</option>
             <option disabled="disabled" value="basic">Basic Auth</option>
             <option disabled="disabled" value="digest">Digest Auth</option>
@@ -24,8 +24,8 @@
             <div class="btn-group">
                 <button class="btn small primary" data-bind="click: onSendClick">Send</button>
                 <button class="btn small" disabled="disabled">URL params</button>
-                <button class="btn small" data-tab="REQUEST_HEADERS" data-bind="css:{active: isActiveResponseTab($element)}, click: setActiveTab, text: getRequestHeadersText($data)">Request headers</button>
-                <button class="btn small" data-bind="disable: isBodylessMethod">Request body</button>
+                <button class="btn small" data-tab="REQUEST_HEADERS" data-bind="css:{active: isActiveResponseTab($element)}, click: setActiveTab, text: getRequestHeadersText($data)"></button>
+                <button class="btn small" data-tab="REQUEST_BODY" data-bind="css:{active: isActiveResponseTab($element)}, click: setActiveTab, disable: isBodylessMethod, text: getRequestBodyText($data)"></button>
                 <!-- ko if: isResponse && lastHistoryItem -->
                 <button class="btn small" data-tab="HEADERS" data-bind="css:{active: isActiveResponseTab($element)}, click: setActiveTab, text: getHeadersText($data)"></button>
                 <button class="btn small" data-tab="BODY" data-bind="css:{active: isActiveResponseTab($element)}, click: setActiveTab">Response body</button>
