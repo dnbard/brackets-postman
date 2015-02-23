@@ -12,6 +12,13 @@ define(function(require, exports, module){
             data = JSON.stringify(data);
         }
 
+        if (/\!doctype/i.test(data)){
+            try{
+                result = Beautifier.html(data, options);
+                return result;
+            } catch(e){ }
+        }
+
         try{
             result = Beautifier.js(data, options);
             return result;

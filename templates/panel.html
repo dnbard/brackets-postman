@@ -24,7 +24,7 @@
             <div class="btn-group">
                 <button class="btn small primary" data-bind="click: onSendClick">Send</button>
                 <button class="btn small" disabled="disabled">URL params</button>
-                <button disabled="disabled" class="btn small">Request headers</button>
+                <button class="btn small" data-tab="REQUEST_HEADERS" data-bind="css:{active: isActiveResponseTab($element)}, click: setActiveTab, text: getRequestHeadersText($data)">Request headers</button>
                 <button class="btn small" data-bind="disable: isBodylessMethod">Request body</button>
                 <!-- ko if: isResponse && lastHistoryItem -->
                 <button class="btn small" data-tab="HEADERS" data-bind="css:{active: isActiveResponseTab($element)}, click: setActiveTab, text: getHeadersText($data)"></button>
@@ -49,8 +49,18 @@
             </div>
         </div>
         <div class="postman-result" data-bind="if: isResponse() || responseView()">
-            <!-- CodeMirror command instance -->
-            <textarea class="postman-result__body" data-bind="codemirror: responseView(), cmEditable: false" style="display: none;"></textarea>
+            <!-- The instance of CodeMirror editor -->
+            <textarea class="postman-result__body" data-bind="codemirror: responseView(), cmEditable: codemirrorEditable, cmMode: codemirrorMode(), cmValue: codemirrorValue" style="display: none;"></textarea>
+            <div class="postman-result__status">
+                <div class="postman-codemirror__editable">
+                    <span class="postman-codemirror__editable-blop" data-bind="css:{ disabled: !codemirrorEditable() }"></span>
+                    <span class="postman-codemirror__editable-label" data-bind="text: codemirrorEditableLabel()"></span>
+                </div>
+                <div class="postman-codemirror__valid" data-bind="visible: codemirrorEditable">
+                    <span class="postman-codemirror__valid-blop" data-bind="css:{ disabled: !isCodemirrorValueValid() }"></span>
+                    <span class="postman-codemirror__valid-label" data-bind="text: codemirrorValidValueLabel()"></span>
+                </div>
+            </div>
         </div>
         <div class="postnam-row postman-result__error" data-bind="if: isErrorResponse() && !responseView()">
             <!-- ko with: lastHistoryItem -->

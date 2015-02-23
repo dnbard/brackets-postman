@@ -4,7 +4,8 @@ define(function(require, exports, module){
         Methods = require('../enums/methods'),
         ResponseTabs = require('../enums/responseTabs'),
         HistoryItem = require('../models/historyItem'),
-        request = require('../services/request');
+        request = require('../services/request'),
+        beautify = require('../services/beautify');
 
     require('../bindings/enterKey');
     require('../bindings/codemirror');
@@ -59,6 +60,14 @@ define(function(require, exports, module){
             var responseTab = this.responseTab(),
                 lastHistoryItem = this.lastHistoryItem();
 
+            if (responseTab === ResponseTabs.REQUEST_HEADERS){
+                try{
+                    return beautify.do(JSON.stringify(this.requestHeaders()));
+                } catch(e){
+                    return '{}';
+                }
+            }
+
             if (!lastHistoryItem){
                 return '';
             }
@@ -70,6 +79,46 @@ define(function(require, exports, module){
             if (responseTab === ResponseTabs.HEADERS){
                 return lastHistoryItem.headers;
             }
+        }, this);
+
+        this.codemirrorEditable = ko.computed(function(){
+            var responseTab = this.responseTab();
+
+            return responseTab === ResponseTabs.REQUEST_HEADERS ||
+                responseTab === ResponseTabs.REQUEST_BODY ||
+                responseTab === ResponseTabs.REQUEST_QUERY;
+        }, this);
+
+        this.codemirrorMode = ko.computed(function(){
+            var lastHistoryItem = this.lastHistoryItem(),
+                responseTab = this.responseTab();
+
+            if (this.codemirrorEditable() || responseTab === ResponseTabs.HEADERS){
+                return 'application/json';
+            }
+
+            if (!lastHistoryItem){
+                return 'application/javascript';
+            }
+
+            return lastHistoryItem.type;
+        }, this);
+
+        this.codemirrorValue = ko.observable('');
+        this.isCodemirrorValueValid = ko.computed(function(){
+            var value = this.codemirrorValue();
+
+            try{
+                JSON.parse(value);
+                return true;
+            } catch(e){
+                return false;
+            }
+        }, this);
+
+        this.requestHeaders = ko.observable({});
+        this.requestHeadersCount = ko.computed(function(){
+            return _.size(this.requestHeaders());
         }, this);
     }
 
@@ -91,7 +140,26 @@ define(function(require, exports, module){
             throw new Error('Cannot set active tab for this element');
         }
 
+        viewmodel.onBeforeTabChange({
+            currentTab: viewmodel.responseTab()
+        });
+
         viewmodel.responseTab(ResponseTabs[tab]);
+    }
+
+    PanelViewModel.prototype.onBeforeTabChange = function(data){
+        if (data.currentTab === ResponseTabs.REQUEST_HEADERS){
+            //if user erased everything
+            if (this.codemirrorValue().length === 0){
+                return this.requestHeaders('');
+            }
+
+            //saving headers if valid JSON object is present
+            try{
+                this.requestHeaders(JSON.parse(this.codemirrorValue()));
+            }
+            catch(e){ }
+        }
     }
 
     PanelViewModel.prototype.getHeadersText = function(viewmodel){
@@ -101,6 +169,16 @@ define(function(require, exports, module){
             return 'Response Headers (' + lastHistoryItem.headersCount + ')';
         } else {
             return 'Response Headers';
+        }
+    }
+
+    PanelViewModel.prototype.getRequestHeadersText = function(viewmodel){
+        var headersCount = viewmodel.requestHeadersCount();
+
+        if (headersCount){
+            return 'Request Headers (' + headersCount + ')';
+        } else {
+            return 'Request Headers';
         }
     }
 
@@ -117,6 +195,10 @@ define(function(require, exports, module){
             return;
         }
 
+        this.onBeforeTabChange({
+            currentTab: this.responseTab()
+        });
+
         if (url.indexOf('http') === -1){
             url = 'http://' + url;
         }
@@ -127,7 +209,8 @@ define(function(require, exports, module){
 
         request.ajax({
             url: url,
-            method: this.method()
+            method: this.method(),
+            headers: this.requestHeaders() || {}
         }).then(function(payload){
             self.history.unshift(HistoryItem.create(_.extend({
                 url: url,
@@ -193,6 +276,16 @@ define(function(require, exports, module){
         this.url(null);
         this.method(_.first(Methods));
         this.lastHistoryItem(null);
+        this.codemirrorValue('');
+        this.requestHeaders({});
+    }
+
+    PanelViewModel.prototype.codemirrorEditableLabel = function(){
+        return this.codemirrorEditable() ? '' : 'read only';
+    }
+
+    PanelViewModel.prototype.codemirrorValidValueLabel = function(){
+        return this.isCodemirrorValueValid() ? '' : 'invalid JSON';
     }
 
     PanelViewModel.prototype.getSpinnerData = function(){

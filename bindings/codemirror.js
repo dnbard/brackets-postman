@@ -5,12 +5,9 @@ define(function(require, exports, module){
         _ = require('../vendor/lodash'),
         codemirrorInstance = null,
         codemirrorConfig = {
-            mode: {
-                name: "javascript",
-                json: true
-            },
             theme: ThemeManager.getCurrentTheme().name
-        };
+        },
+        codemirror = require('../enums/codemirror');
 
     function getValue(valueAccessor){
         return valueAccessor() || '';
@@ -26,14 +23,16 @@ define(function(require, exports, module){
                     value: getValue(valueAccessor)
                 }));
 
-                $(element).trigger('cmInit');
+                $(element).trigger(codemirror.EVENTS.INIT);
             }
 
             ko.utils.domNodeDisposal.addDisposeCallback(element, function(){
                 //TODO: investigate how to and call codemirror disposer
 
-                $(element.parentNode).find('.CodeMirror').remove();
-                codemirrorInstance = null;
+                $(element.parentNode).find(codemirror.SELECTOR).remove();
+                setTimeout(function(){
+                    codemirrorInstance = null;
+                }, 0);
             });
         },
         update: function(element, valueAccessor){
@@ -41,24 +40,66 @@ define(function(require, exports, module){
         }
     }
 
-    function setEditable(value){
-        codemirrorInstance.setOption('readOnly', !value);
+    function setOption(option, value){
+        codemirrorInstance.setOption(option, value);
     }
 
     ko.bindingHandlers.cmEditable = {
         init: function(element, valueAccessor){
-            $(element).on('cmInit', function(){
-                setEditable(valueAccessor());
+            $(element).on(codemirror.EVENTS.INIT, function(){
+                setOption(codemirror.OPTIONS.READONLY, !ko.unwrap(valueAccessor()));
             });
 
             ko.utils.domNodeDisposal.addDisposeCallback(element, function(){
-                $(element).off('cmInit');
+                $(element).off(codemirror.EVENTS.INIT);
             });
         },
         update: function(element, valueAccessor){
             if (codemirrorInstance){
-                setEditable(valueAccessor());
+                setOption(codemirror.OPTIONS.READONLY, !ko.unwrap(valueAccessor()));
             }
+        }
+    }
+
+    ko.bindingHandlers.cmMode = {
+        init: function(element, valueAccessor){
+            $(element).on(codemirror.EVENTS.INIT, function(){
+                setOption(codemirror.OPTIONS.MODE, ko.unwrap(valueAccessor()));
+            });
+
+            ko.utils.domNodeDisposal.addDisposeCallback(element, function(){
+                $(element).off(codemirror.EVENTS.INIT);
+            });
+        },
+        update: function(element, valueAccessor){
+            if (codemirrorInstance){
+                setOption(codemirror.OPTIONS.MODE, ko.unwrap(valueAccessor()));
+            }
+        }
+    }
+
+    ko.bindingHandlers.cmValue = {
+        init: function(element, valueAccessor, allBindingsAccessor, viewmodel){
+            function onCodemirrorChange(codemirror, change){
+                var cmValue = codemirror.getValue();
+                viewmodel.codemirrorValue(cmValue);
+            }
+
+            function onCodemirrorInit(){
+                codemirrorInstance.on(codemirror.EVENTS.CHANGE, onCodemirrorChange);
+                onCodemirrorChange(codemirrorInstance, null);
+            }
+
+            if (!codemirrorInstance){
+                $(element).on(codemirror.EVENTS.INIT, onCodemirrorInit);
+            } else {
+                onCodemirrorInit();
+            }
+
+            ko.utils.domNodeDisposal.addDisposeCallback(element, function(){
+                codemirrorInstance.off(codemirror.EVENTS.CHANGE, onCodemirrorChange);
+                $(element).off(codemirror.EVENTS.INIT, onCodemirrorInit);
+            });
         }
     }
 });
