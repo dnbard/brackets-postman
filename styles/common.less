@@ -1,3 +1,5 @@
+@import (less)"styles.css";
+
 #postman-toolbar-icon{
     background: transparent;
     display: inline-block;
@@ -29,6 +31,21 @@
 
     .toolbar{
         min-height: 21px;
+
+        #toolbar-settings{
+            background: transparent;
+            color: gray;
+            border: none;
+            font-size: 9pt;
+            outline: none;
+            position: absolute;
+            top: 7px;
+            right: 20px;
+
+            &:hover{
+                color: white;
+            }
+        }
     }
 
     #auth__select{
