@@ -13,3 +13,6 @@ This is alpha release. Please submit bugs and new ideas.
 * Ability to set headers and request body
 * Ability to view response headers
 * Compact layout integrated into the Brackets
+
+##How to set request headers
+![request headers](https://raw.githubusercontent.com/dnbard/brackets-postman/master/presentation/headers.gif)
