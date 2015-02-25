@@ -4,17 +4,21 @@ define(function(require, exports, module){
         ko = require('../vendor/knockout'),
         _ = require('../vendor/lodash'),
         codemirrorInstance = null,
-        codemirrorConfig = {
-            theme: ThemeManager.getCurrentTheme().name
-        },
+        codemirrorConfig = { },
         codemirror = require('../enums/codemirror');
 
     function getValue(valueAccessor){
         return valueAccessor() || '';
     }
 
+    function setOption(option, value){
+        codemirrorInstance.setOption(option, value);
+    }
+
     ko.bindingHandlers.codemirror = {
         init: function(element, valueAccessor, allBindingsAccessor, viewModel){
+            var $element = $(element);
+
             //One instance of codemirror should be available
             if (!codemirrorInstance){
                 codemirrorInstance = CodeMirror(function(elt){
@@ -23,13 +27,21 @@ define(function(require, exports, module){
                     value: getValue(valueAccessor)
                 }));
 
-                $(element).trigger(codemirror.EVENTS.INIT);
+                $element.trigger(codemirror.EVENTS.INIT);
+                $element.on(codemirror.EVENTS.THEME_CHANGE, function(event, theme){
+                    setOption('theme', theme);
+                });
+
+                $element.trigger(codemirror.EVENTS.THEME_CHANGE, [ThemeManager.getCurrentTheme().name]);
             }
 
             ko.utils.domNodeDisposal.addDisposeCallback(element, function(){
                 //TODO: investigate how to and call codemirror disposer
+                var $element = $(element);
 
                 $(element.parentNode).find(codemirror.SELECTOR).remove();
+                $element.off(codemirror.EVENTS.THEME_CHANGE);
+
                 setTimeout(function(){
                     codemirrorInstance = null;
                 }, 0);
@@ -38,10 +50,6 @@ define(function(require, exports, module){
         update: function(element, valueAccessor){
             codemirrorInstance.doc.setValue(getValue(valueAccessor));
         }
-    }
-
-    function setOption(option, value){
-        codemirrorInstance.setOption(option, value);
     }
 
     ko.bindingHandlers.cmEditable = {
