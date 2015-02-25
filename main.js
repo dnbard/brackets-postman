@@ -5,7 +5,7 @@ define(function(require, exports, module){
         panelTemplate = require('text!./templates/panel.html'),
         panelId = 'brackets-postman__panel',
         ko = require('./vendor/knockout'),
-        PanelViewModel = require('./viewmodels/panel');
+        PanelViewModel = require('./viewmodels/main');
 
     var panel = null;
 
