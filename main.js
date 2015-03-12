@@ -15,7 +15,7 @@ define(function(require, exports, module){
             $panel;
 
         if (!panel){
-            $panel = $(_.template(panelTemplate,{
+            $panel = $(_.template(panelTemplate)({
                 id: panelId
             }));
 
