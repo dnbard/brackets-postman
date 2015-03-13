@@ -2,7 +2,7 @@ define(function(require, exports, module){
     var CodeMirror = brackets.getModule("thirdparty/CodeMirror2/lib/codemirror"),
         ThemeManager = brackets.getModule("view/ThemeManager"),
         ko = require('../vendor/knockout'),
-        _ = require('../vendor/lodash'),
+        _ = brackets.getModule("thirdparty/lodash"),
         codemirrorInstance = null,
         codemirrorConfig = { },
         codemirror = require('../enums/codemirror');

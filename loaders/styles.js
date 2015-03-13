@@ -1,6 +1,6 @@
 define(function(require, exports, module){
     var stylesheets = ["../styles/common.less"],
-        _ = require('../vendor/lodash');
+        _ = brackets.getModule("thirdparty/lodash");
 
     exports.load = function(){
         var ExtensionUtils  = brackets.getModule("utils/ExtensionUtils");
