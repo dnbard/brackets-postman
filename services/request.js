@@ -1,7 +1,7 @@
 define(function(require, exports){
     var Q = require('../vendor/q'),
         beautify = require('./beautify'),
-        _ = require('../vendor/lodash');
+        _ = brackets.getModule("thirdparty/lodash");
 
     function getResponseType(headersData){
         var tempData = (headersData || '').split('\n'),

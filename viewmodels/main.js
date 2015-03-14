@@ -1,6 +1,6 @@
 define(function(require, exports, module){
     var ko = require('../vendor/knockout'),
-        _ = require('../vendor/lodash'),
+        _ = brackets.getModule("thirdparty/lodash"),
         Methods = require('../enums/methods'),
         ResponseTabs = require('../enums/responseTabs'),
         HistoryItem = require('../models/historyItem'),
